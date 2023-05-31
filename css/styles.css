@@ -32,7 +32,7 @@ body{
 
 .material-icons.md-32 { font-size: 32px; }
 
-.main__bloco-notas{
+#main__bloco-notas{
     width: 100%;
 }
 .nota-titulo{
@@ -67,7 +67,7 @@ body{
     height: 30px;
     background-color: white;
 }
-.input-text{
+#input-text{
     height: 100px;
 }
 
