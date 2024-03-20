@@ -29,13 +29,15 @@ body{
     background-color: rgb(174, 226, 85);
     outline: none;
 }
-
+.main__btn:hover{
+    cursor: pointer;
+}
 .material-icons.md-32 { font-size: 32px; }
 
 #main__bloco-notas{
     width: 100%;
 }
-.nota-titulo{
+.box-titulo{
     padding: 1rem;
     padding-left: 0;
     font-size: 2rem;
@@ -62,6 +64,9 @@ body{
     left: 50%;
    transform: translate(-50%,-50%);
 }
+/* .nota-complete div{
+    display: flex;
+} */
 .input{
     width: 580px;
     height: 30px;
@@ -74,4 +79,11 @@ body{
 .nota-complete.hide,.fade.hide{
     opacity: 0;
     pointer-events: none;
+}
+.nota-titulo{
+    display: flex;
+    justify-content: space-between;
+}
+.texto-titulo:hover{
+    cursor: pointer;
 }

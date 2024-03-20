@@ -1,117 +1,130 @@
-let blocoNotas = document.getElementById("main__bloco-notas");
-let btnAdd = document.getElementsByClassName("main__btn")[0];
-let fade = document.getElementsByClassName("fade")[0];
-let modal = document.getElementsByClassName("nota-complete")[0];
-let tituloNota = document.getElementById("input-title");
-let textoNota =  document.getElementById("input-text");
-let indice1 = 0;
+const blocoNotas = document.getElementById("main__bloco-notas");
+const btnAdd = document.getElementsByClassName("main__btn")[0];
+const fade = document.getElementsByClassName("fade")[0];
+const modal = document.getElementsByClassName("nota-complete")[0];
+const tituloModal = document.getElementById("input-title");
+const textoModal =  document.getElementById("input-text");
+const btnDelete = document.getElementsByClassName('btn-delete')[0];
 
-let ultimoId;
-let bol = true;
-let bol2 = false;
-let notasConteudo=  new Array();
+let indice = 0;
+let listaNotas=  [];
+let atualNota = 0;
+let modalOn = false;
 
-if(localStorage.hasOwnProperty('notasConteudo')){
-    notasConteudo = JSON.parse(localStorage.getItem('notasConteudo'));
-    // notasConteudo=  new Array(notasConteudo );
 
-    for(let i = 0; i < notasConteudo.length;++i){
-        let nota = document.createElement('div');
-        nota.classList.add('nota')
-        nota.innerHTML = `<div class="nota-titulo">
-                                <p id = ${notasConteudo[i].indice}>${notasConteudo[i].tituloNota}<p>
-                            </div>`
-        blocoNotas.appendChild(nota)
-    };
-    indice1 = (notasConteudo[notasConteudo.length-1].indice)+1
-    bol = false
+
+class Notas{
+    constructor(titulo,texto,id){
+        this.titulo = titulo;
+        this.texto = texto;
+        this.id = id;
+    }
+    criarNota(){
+        limparInputs()
+        // this.id = indice;
+        let divTitulo = document.createElement('div');
+        divTitulo.classList.add('box-titulo')
+
+        divTitulo.innerHTML = `<p class = 'texto-titulo' id=${this.id}><p>`
+        blocoNotas.appendChild(divTitulo)
+    }
+    mostrarConteudo(){
+        tituloModal.textContent = this.titulo
+        textoModal.textContent = this.texto        
+    }
 }
 
+if(localStorage.hasOwnProperty('listaNotas')){
+    listaNotas = JSON.parse(localStorage.getItem('listaNotas'));
 
-function createNote(){
-    tituloNota.value = '';
-    textoNota.value ='';
-    let nota = document.createElement('div');
-    nota.classList.add('nota')
-    nota.innerHTML = `<div class="nota-titulo">
-                            <p id = ${indice1}><p>
-                        </div>`
-    blocoNotas.appendChild(nota)
-    bol = true;
-    toggleModal()
-    
-    
+    for(let i = 0; i < listaNotas.length;++i){
+        let nota = new Notas(listaNotas[i].titulo,listaNotas[i].texto,listaNotas[i].id);
+        nota.criarNota()
+        console.log( listaNotas[i].id)
+        let div = document.getElementById(listaNotas[i].id)
+        div.innerText =  listaNotas[i].titulo   
+
+    };
+    indice = parseInt(listaNotas[listaNotas.length-1].id)+1
+    console.log(indice)
+}
+
+addEventListener('click',(e)=>{
+    if(!modalOn){
+        let titulosTag = document.getElementsByClassName('texto-titulo') 
+        console.log(listaNotas) 
+        console.log(modalOn ) 
+
+        for(let i = 0; i< titulosTag.length;++i){
+            if(titulosTag[i].id == e.target.id){
+                for(let k = 0; k< listaNotas.length;++k){
+                    if(listaNotas[k].id == titulosTag[i].id){
+                        console.log(e.target.id,titulosTag[i].id)
+                        console.log('k'+k)  
+                        limparInputs()
+                        tituloModal.value = listaNotas[k].titulo
+                        textoModal.value = listaNotas[k].texto
+                        atualNota = k;
+                        toggleModal()
+                        
+                    }
+                }
+            }
+        }   
+    }
+
+});
+
+function limparInputs(){
+    tituloModal.value = '';
+    textoModal.value =''; 
 }
 
 function toggleModal(){
     fade.classList.toggle("hide");
     modal.classList.toggle("hide");
-    
+    console.log('modal')   
 }
 
-btnAdd.addEventListener('click',createNote);
-fade.addEventListener('click',()=>{
+btnAdd.addEventListener('click',()=>{
+    console.log('btn add')
+    let nota = new Notas();
+    nota.id = indice
+    nota.criarNota() 
     toggleModal()
-    if(tituloNota.value == '' && textoNota.value == ''){
-        blocoNotas.removeChild(nota);
-        bol = false
-    }
-    
-    if(bol == true){
-        let notaTitulo = document.getElementById(indice1);
-        notasConteudo.push({'indice':`${indice1}`,'tituloNota':`${tituloNota.value}`,'textoNota':`${textoNota.value}`})
-        
-        notaTitulo.textContent = tituloNota.value
-        indice1 +=1; 
-      
-        bol = false;
-        
-    }
-    storage()
-    bol2 = false;
-
-
-   
-
+    atualNota = indice;
+    ++indice;
+    listaNotas.push(nota);
+    modalOn = true
 });
 
-blocoNotas.addEventListener('click', function(e) {
-    if(e.target.id == "input-text" || e.target.id  =="input-title")
-        return; 
-    
+fade.addEventListener('click',()=>{
 
-    console.log(notasConteudo)
-    fade.classList.toggle("hide");
-    modal.classList.toggle("hide");
-
-
-    for(let i = 0; i < notasConteudo.length; ++i){
-        if(e.target.id == notasConteudo[i].indice){
-            tituloNota.value = notasConteudo[i].tituloNota;
-            textoNota.value = notasConteudo[i].textoNota;
-        }
+    console.log(textoModal.textContent)
+    if(listaNotas[atualNota].titulo == '' || listaNotas[atualNota].titulo == undefined){
+        listaNotas[atualNota].titulo = 'sem titulo'
     }
-    ultimoId = e.target.id ;
-    
-    bol2 = true;
+    if(listaNotas[atualNota].texto == undefined){
+        listaNotas[atualNota].texto = ''
+    } 
+    console.log(atualNota)
+    let div = document.getElementById(listaNotas[atualNota].id)
+    div.innerText =  listaNotas[atualNota].titulo
+    toggleModal()
+    storage()
+    modalOn = false
+})
+modal.addEventListener('input',(e)=>{
+    if(e.target.id == 'input-title'){
+        listaNotas[atualNota].titulo = e.target.value;
+    }else if(e.target.id == 'input-text'){
+        listaNotas[atualNota].texto = e.target.value;
+    }
+    modalOn = true
 
 })
 
-modal.addEventListener('input', function(e){
-    if(bol2){ 
-        if(e.target.id == "input-title"){
-            notasConteudo[ultimoId].tituloNota = e.target.value;
-            let notaTitulo = document.getElementById(ultimoId);
-            notaTitulo.textContent =  e.target.value;
-        }
-        if(e.target.id == "input-text"){
-            notasConteudo[ultimoId].textoNota = e.target.value;
-
-        }
-    }
-
-})
 function storage(){
-    console.log(localStorage);
-    localStorage.setItem('notasConteudo',JSON.stringify(notasConteudo))
+    localStorage.setItem('listaNotas',JSON.stringify(listaNotas))
 }
+
