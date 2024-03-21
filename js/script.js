@@ -11,8 +11,6 @@ let listaNotas=  [];
 let atualNota = 0;
 let modalOn = false;
 
-
-
 class Notas{
     constructor(titulo,texto,id){
         this.titulo = titulo;
